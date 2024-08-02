@@ -80,5 +80,5 @@ def IDtoURL(id):
     if id == None:
         finalURL = None
     else:
-        finalURL = 'music.apple.com/us/song/' + id
+        finalURL = 'https://music.apple.com/us/song/' + id
     return finalURL
