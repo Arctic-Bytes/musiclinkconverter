@@ -1,22 +1,16 @@
-import re
-
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
+
+from songInfoFromSearch import songInfoForSearch
 
 load_dotenv()
 scope = "user-library-read"
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
-def songArtistNames(musicLink):
-    songID = getIDFromLink(musicLink)
-    track = sp.track(songID)
-    songName = track['name']
-    artistName = track['artists'][0]['name']
-    return songName, artistName
-
-def getIDFromLink(link):
-    match = re.match(r'https://open.spotify.com/track/(.*)\?si=(.*)', link)
-    match = match.group(1)
-    return match
+def spotifySearch(song, artist):
+    songInfo = songInfoForSearch(song, artist)
+    spotifyLink = sp.search(songInfo, limit=10, type="track", market="US")
+    spotifyURL = spotifyLink['tracks']['items'][0]['external_urls']['spotify']
+    return spotifyURL

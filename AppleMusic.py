@@ -4,6 +4,8 @@ import requests
 import json
 from dotenv import load_dotenv
 
+from songInfoFromSearch import songInfoForSearch
+
 load_dotenv()
 
 def musicSearch(song, artist):
@@ -63,9 +65,6 @@ def musicSearch(song, artist):
     finalURL = IDtoURL(URLID)
     return finalURL
 
-def songInfoForSearch(song, artist):
-    songInfo = song + " " + artist
-    return songInfo
 
 def strippedURLInfo(info):
     urlInfo = json.loads(info.text)
