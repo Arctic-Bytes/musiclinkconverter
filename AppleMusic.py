@@ -78,7 +78,7 @@ def strippedURLInfo(info):
     return urlid
 
 def strippedPlaylistURL(URL):
-    playlist = re.match(r'https://music.apple.com/us/playlist/.+/.+-([^?]+)', URL)
+    playlist = re.match(r'https://music.apple.com/us/playlist/.+/pl.([^?]+)', URL)
     playlistID = playlist.group(1)
     return playlistID
 
@@ -128,7 +128,7 @@ def appleMusicConversion(link):
         ]
 
         response = requests.get(
-            'https://amp-api.music.apple.com/v1/catalog/us/playlists/pl.u-' + linkID + '/tracks',
+            'https://amp-api.music.apple.com/v1/catalog/us/playlists/pl.' + linkID + '/tracks',
             params=params,
             cookies=cookies,
             headers=headers,
