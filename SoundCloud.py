@@ -45,6 +45,3 @@ def URLRetriever(info):
     urlInfo = json.loads(info.text)
     finalURL = urlInfo['collection'][00]['permalink_url']
     return finalURL
-
-if __name__ == "__main__":
-    soundCloudSearch('PS1', 'EDEN')

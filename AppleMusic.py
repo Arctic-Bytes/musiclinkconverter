@@ -1,10 +1,12 @@
 from os import getenv
 
+import re
 import requests
 import json
 from dotenv import load_dotenv
 
 from songInfoFromSearch import songInfoForSearch
+from Spotify import spotifyPlaylistConversion, createPlaylistWithSongs
 
 load_dotenv()
 
@@ -75,9 +77,70 @@ def strippedURLInfo(info):
         urlid = None
     return urlid
 
+def strippedPlaylistURL(URL):
+    playlist = re.match(r'https://music.apple.com/us/playlist/.+/.+-([^?]+)', URL)
+    playlistID = playlist.group(1)
+    return playlistID
+
 def IDtoURL(id):
     if id == None:
         finalURL = None
     else:
         finalURL = 'https://music.apple.com/us/song/' + id
     return finalURL
+
+def appleMusicConversion(link):
+    offset = 0
+    statusCode = 0
+    linkID = strippedPlaylistURL(link)
+
+    spotifyURIList = []
+
+    cookies = {
+        'geo': 'US',
+    }
+
+    headers = {
+        'accept': '*/*',
+        'accept-language': 'en-US,en;q=0.9',
+        'authorization': getenv('TOKEN'),
+        'cache-control': 'no-cache',
+        # 'cookie': 'geo=US',
+        'origin': 'https://music.apple.com',
+        'pragma': 'no-cache',
+        'referer': 'https://music.apple.com/',
+        'sec-ch-ua': getenv('BROWSERINFO'),
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        'user-agent': getenv('USERAGENT')
+    }
+    while statusCode != 404:
+        params = [
+            ('l', 'en-US'),
+            ('offset', str(offset)),
+            ('art[url]', 'f'),
+            ('format[resources]', 'map'),
+            ('l', 'en-US'),
+            ('platform', 'web'),
+        ]
+
+        response = requests.get(
+            'https://amp-api.music.apple.com/v1/catalog/us/playlists/pl.u-' + linkID + '/tracks',
+            params=params,
+            cookies=cookies,
+            headers=headers,
+        )
+        statusCode = response.status_code
+        offset += 100
+        songsList = json.loads(response.content)
+        if statusCode != 404:
+            for id, song in songsList['resources']['songs'].items():
+                songName = song['attributes']['name']
+                artistName = song['attributes']['artistName']
+                spotifyURI = spotifyPlaylistConversion(songName, artistName)
+                spotifyURIList.append(spotifyURI)
+
+    createPlaylistWithSongs(spotifyURIList)

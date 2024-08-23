@@ -2,13 +2,13 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 
-from AppleMusic import musicSearch
+from AppleMusic import musicSearch, appleMusicConversion
 from SoundCloud import soundCloudSearch
 from Spotify import spotifySearch
 from YouTubeMusic import ytMusicSearch
 
 
-def userWindow():
+def songSearch():
     # Retrieves the variables from the text box
     def searchButtonClick():
         song = songInput.get()
@@ -64,5 +64,22 @@ def userWindow():
 
     root.mainloop()
 
-if __name__ == "__main__":
-    userWindow()
+def playlistConverter():
+    root = Tk()
+    frm = ttk.Frame(root, padding=50)
+    frm.grid()
+
+    def playlistConversion():
+        URL = appleMusicURL.get()
+        appleMusicConversion(URL)
+        ttk.Label(frm, text="Done! Check your Spotify library for your converted playlist!").grid(column=0, row=1, pady=10, columnspan=2)
+
+
+    ttk.Button(frm, text="Convert", command=playlistConversion).grid(column=2, row=2)
+    ttk.Label(frm, text="Paste Apple Music link here:").grid(column=0, row=0, pady=10)
+    appleMusicURL = ttk.Entry(frm)
+    appleMusicURL.grid(column=1, row=0, pady=10, columnspan=3)
+
+    ttk.Button(frm, text="Quit", command=root.destroy).grid(column=0, row=2, pady=10)
+
+    root.mainloop()
