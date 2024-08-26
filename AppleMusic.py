@@ -93,6 +93,7 @@ def appleMusicConversion(link):
     offset = 0
     statusCode = 0
     linkID = strippedPlaylistURL(link)
+    counter = 0
 
     spotifyURIList = []
 
@@ -142,5 +143,7 @@ def appleMusicConversion(link):
                 artistName = song['attributes']['artistName']
                 spotifyURI = spotifyPlaylistConversion(songName, artistName)
                 spotifyURIList.append(spotifyURI)
+                counter += 1
+                print(counter)
 
     createPlaylistWithSongs(spotifyURIList)

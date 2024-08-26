@@ -33,4 +33,3 @@ def createPlaylistWithSongs(URIlist):
     playlistID = playlist['id']
     for id in range(0, len(URIlist), 100):
         sp.playlist_add_items(playlistID, URIlist[id:id+100])
-
